@@ -53,4 +53,5 @@ readExpr input = case parse parseExpr "lisp" input of
 main :: IO ()
 main = do
   args <- getArgs
+  mapM_ putStrLn args
   putStrLn (readExpr (args !! 0))
