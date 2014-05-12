@@ -9,10 +9,6 @@ data LispVal = Atom String
              | Number Integer
              | String String
              | Bool Bool
-             deriving (Show)
-
-instance Show where
-  read val = "hello"
 
 symbol :: Parser Char
 symbol = oneOf "!$%&|*+-/:<=>?@^_~"
@@ -52,7 +48,7 @@ parseExpr = parseAtom
 readExpr :: String -> String
 readExpr input = case parse parseExpr "lisp" input of
   Left err -> "No match: " ++ show err
-  Right val -> "Found value: " ++ (read val)
+  Right val -> "Found value"
 
 main :: IO ()
 main = do
