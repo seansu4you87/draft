@@ -10,6 +10,15 @@ data LispVal = Atom String
              | String String
              | Bool Bool
 
+instance Show LispVal where
+  show (Atom string) = "Atom: " ++ string
+  show (List list) = "List: " ++ show (map show list)
+  show (DottedList list val) = "DottedList: " ++ show list ++ " " ++ show val
+  show (Number int) = "Number: " ++ show int
+  show (String string) = "String: " ++ string
+  show (Bool bool) = "Bool: " ++ show bool
+  -- show _ = "wtf"
+
 symbol :: Parser Char
 symbol = oneOf "!$%&|*+-/:<=>?@^_~"
 
@@ -40,6 +49,10 @@ parseNumber = do
   number <- many1 digit
   return $ Number . read $ number
 
+-- Couldn't figure out how to implement with >>= =[
+-- parseNumber :: Parser LispVal
+-- parseNumber = (many1 digit) >>= (Number . read)
+
 parseExpr :: Parser LispVal
 parseExpr = parseAtom
         <|> parseString
@@ -48,7 +61,7 @@ parseExpr = parseAtom
 readExpr :: String -> String
 readExpr input = case parse parseExpr "lisp" input of
   Left err -> "No match: " ++ show err
-  Right val -> "Found value"
+  Right val -> "Found value: " ++ show val
 
 main :: IO ()
 main = do
