@@ -44,7 +44,7 @@ parseAtom = do
 
 -- parseNumber :: Parser LispVal
 -- parseNumber = liftM (Number . read) $ many1 digit
-parseNumber :: Parser LispVal
+-- parseNumber :: Parser LispVal
 parseNumber = do
   number <- many1 digit
   return $ Number . read $ number
@@ -52,8 +52,12 @@ parseNumber = do
 -- parseNumber :: Parser LispVal
 -- parseNumber = (many1 digit) >>= (Number . read)
 
+-- parseList :: Parser LispVal
+-- parseList = liftM List $ sepBy parseExpr spaces
 parseList :: Parser LispVal
-parseList = liftM List $ sepBy parseExpr spaces
+parseList = do
+  list <- sepBy parseExpr spaces
+  return $ List list
 
 parseDottedList :: Parser LispVal
 parseDottedList = do
