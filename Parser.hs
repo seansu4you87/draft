@@ -11,13 +11,36 @@ data LispVal = Atom String
              | Bool Bool
 
 instance Show LispVal where
-  show (Atom string) = "Atom: " ++ string
-  show (List list) = "List: " ++ show (map show list)
-  show (DottedList list val) = "DottedList: " ++ show list ++ " " ++ show val
-  show (Number int) = "Number: " ++ show int
-  show (String string) = "String: " ++ string
-  show (Bool bool) = "Bool: " ++ show bool
+  show = showVal
+  -- show (Atom string) = "Atom: " ++ string
+  -- show (List list) = "List: " ++ show (map show list)
+  -- show (DottedList list val) = "DottedList: " ++ show list ++ " " ++ show val
+  -- show (Number int) = "Number: " ++ show int
+  -- show (String string) = "String: " ++ string
+  -- show (Bool bool) = "Bool: " ++ show bool
   -- show _ = "wtf"
+
+showVal :: LispVal -> String
+showVal (String contents) = "\"" ++ contents ++ "\""
+showVal (Atom name) = name
+showVal (Number contents) = show contents
+showVal (Bool True) = "#t"
+showVal (Bool False) = "#f"
+showVal (List contents) = "(" ++ unwordsList contents ++ ")"
+showVal (DottedList head tail) = "(" ++ unwordsList head ++ " . " ++ showVal tail ++ ")"
+
+unwordsList :: [LispVal] -> String
+unwordsList = unwords . map showVal
+
+-- EVALUATOR --
+
+eval :: LispVal -> LispVal
+eval val@(String _) = val
+eval val@(Number _) = val
+eval val@(Bool _) = val
+eval (List [Atom "quote", val]) = val
+
+-- PARSER --
 
 symbol :: Parser Char
 symbol = oneOf "!$%&|*+-/:<=>?@^_~"
@@ -82,13 +105,17 @@ parseExpr = parseAtom
           char ')'
           return x
 
-readExpr :: String -> String
+readExpr :: String -> LispVal
 readExpr input = case parse parseExpr "lisp" input of
-  Left err -> "No match: " ++ show err
-  Right val -> "Found value: " ++ show val
+  Left err -> String $ "No match: " ++ show err
+  Right val -> val
 
+-- MAIN --
+
+-- main :: IO ()
+-- main = do
+--   args <- getArgs
+--   mapM_ putStrLn args
+--   putStrLn (readExpr (args !! 0))
 main :: IO ()
-main = do
-  args <- getArgs
-  mapM_ putStrLn args
-  putStrLn (readExpr (args !! 0))
+main = getArgs >>= putStrLn . show. eval . readExpr . (!! 0)
