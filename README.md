@@ -3,7 +3,7 @@ draft
 
 Scheme implementation
 
-([source](http://jonathan.tang.name/files/scheme_in_48/tutorial/overview.html)]
+([source](http://jonathan.tang.name/files/scheme_in_48/tutorial/overview.html))
 
 # Log
 
